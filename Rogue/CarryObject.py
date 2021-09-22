@@ -15,5 +15,10 @@ class CarryObject(object):
         self.hitPlus:int = 0                # Plusses to hit
         self.damagePlus:int = 0             # Plusses to damage
         self.armorClass:int = 0             # Armor class
-        self.flags = Flags([ "isKnow" ])                  # Information about objects
+        self.flags = Flags([                # Information about objects
+            "isKnow",
+            "isCursed",
+            "isMisl",
+            "isMany"
+        ])
         self.group:int = 0                  # Group number for this object

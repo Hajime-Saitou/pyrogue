@@ -162,7 +162,7 @@ def wakeMonster(coord):
     # The umber hulk's gaze has confused you.
     if ch == "U" and not Player.player.flags.isBlind:
         if (room and room.flags.isDark) or monster.distance(Player.player.position) < 3:
-            if not monster.flags.isFound and not Fight.saveThrow(Fight.SaveAgainstThings.Magic):
+            if not monster.flags.isFound and not Fight.saveThrow(monster, Fight.SaveAgainstThings.Magic):
                 Io.msg("The umber hulk's gaze has confused you.")
                 if Player.player.flags.isHuh:
                     Global.daemonManager.lengthen(Daemons.unconfuse, Global.rnd(20) + Global.HuhDuration)

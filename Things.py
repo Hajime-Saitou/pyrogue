@@ -163,15 +163,20 @@ def newThing():
         item.damage = weapon["Damage"]
         item.hurlDamage = weapon["HurlDamage"]
         item.launch = weapon["Launch"]
-        item.flags = weapon["Flags"]
-        if item.flags & Global.Flags.IsMany:
+
+        if weapon["Flags"] & Global.Flags.IsMany:
+            item.flags.isMany = True
+        if weapon["Flags"] & Global.Flags.IsMisl:
+            item.flags.isMisl = True
+
+        if item.flags.isMany:
             item.count = Global.rnd(8) + 8
         else:
             item.count = 1
 
         r = Global.rnd(100)
         if r < 10:
-            item.flags |= Global.Flags.IsCursed
+            item.flags.isCursed = True
             item.hitPlus -= Global.rnd(3) + 1
         elif r < 15:
             item.hitPlus += Global.rnd(3) + 1
@@ -189,7 +194,7 @@ def newThing():
             item.armorClass = Global.armors[0]["ArmorClass"]
         r = Global.rnd(100)
         if r < 20:
-            item.flags |= Global.Flags.IsCursed
+            item.flags.isCursed = True
             item.armorClass += Global.rnd(3) + 1
         elif r < 28:
             item.armorClass -= Global.rnd(3) + 1
@@ -199,13 +204,13 @@ def newThing():
         if item.which in [ RingOf.AddStrength, RingOf.Protection, RingOf.Dexterity, RingOf.IncreaseDamage ]:
             if Global.rnd(3) == 0:
                 item.armorClass = -1
-                item.flags |= Global.Flags.IsCursed
+                item.flags.isCursed = True
         elif item.which in [ RingOf.AggravateMonster, RingOf.Teleportation ]:
-            item.flags |= Global.Flags.IsCursed
+            item.flags.isCursed = True
     elif kindOfItem == ThingTypes.Stick:
         item.type = Global.Stick
         item.which = pickOne(Global.stickMagic)
-        Sticks.Fix(item)
+        Sticks.fix(item)
     else:
         raise ValueError(f"Picked a bad kind of object: {kindOfItem}")
 

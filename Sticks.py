@@ -36,6 +36,8 @@ class StickOf(IntEnum):
 
 # fix
 def fix(item):
+    global wsTypes, wsMade
+
     Global.logger.debug(f"which: {item.which}")
     if wsTypes[item.which] == "staff":
         item.damage = "2d3"
@@ -56,6 +58,8 @@ def initTentativeName(nofSticks):
 
 # Initialize the construction materials for wands and staffs
 def initMaterials(nofSticks):
+    global wsTypes, wsMade
+
     wood = [
         "Avocado wood",
         "Balsa",
@@ -105,8 +109,6 @@ def initMaterials(nofSticks):
             wsTypes[index] = "staff"
             wsMade[index] = wood[Global.rnd(len(wood))]
 
-    return
-
 # charge a wand for wizards.
 def chargeStr(item):
     return f"[{item.charges} charges]" if item.flags & Global.Flags.IsKnow else ""
@@ -131,7 +133,7 @@ def doZap(delta:Coordinate) -> None:
 
     if item.which == StickOf.Light:
         # Reddy Kilowat wand.  Light up the room
-        Global.ringMagic.know[StickOf.Light] = True
+        Global.stickMagic.know[StickOf.Light] = True
 
         room = Rooms.roomIn(Player.player.position)
         if room is None:
@@ -182,7 +184,7 @@ def doZap(delta:Coordinate) -> None:
                 if str(Global.playerWindow.inch(coord.y, coord.x)).isupper():
                     Global.playerWindow.addch(coord.y, coord.x, monsterCh)
                 monster.oldCh = oldch
-                ws_know[StickOf.Polymorph] |= (monster != oMonsterCh)
+                Global.stickMagic.know[StickOf.Polymorph] |= (monster != oMonsterCh)
             elif item.which == StickOf.Cancellation:
                 monster.flags.isCanc = True
                 monster.flags.isInvis = False
@@ -214,12 +216,12 @@ def doZap(delta:Coordinate) -> None:
         bolt.damagePlus = 1
 
         Weapon.doMotion(bolt, delta)
-        if str(Global.monsterWindow.inch(bolt.y, bolt.x)).isupper() and Fight.saveThrow(Fight.SaveAgainstThings.Magic, Monsters.findMonster(bolt.position)):
+        if str(Global.monsterWindow.inch(bolt.y, bolt.x)).isupper() and Fight.saveThrow(Monsters.findMonster(bolt.position), Fight.SaveAgainstThings.Magic):
                 Weapon.hitMonster(bolt.position, bolt)
         else:
             Io.msg("The missle vanishes with a puff of smoke")
 
-        Global.ringMagic.know[StickOf.MagicMissile] = True
+        Global.stickMagic.know[StickOf.MagicMissile] = True
     elif item.which == StickOf.Striking:
         delta += Player.player.position
         ch = str(Io.winAt(delta))
@@ -300,7 +302,7 @@ def doZap(delta:Coordinate) -> None:
                 break
             else:
                 if not bounced and ch.isupper():
-                    if not Fight.saveThrow(Fight.SaveAgainstThings.Magic, Monsters.findMonser(pos)):
+                    if not Fight.saveThrow(Monsters.findMonser(pos), Fight.SaveAgainstThings.Magic):
                         bolt.o_pos = pos
                         Weapon.hitMonster(pos, bolt)
                         used = True
@@ -325,7 +327,7 @@ def doZap(delta:Coordinate) -> None:
 
         for x in range(y):
             Global.playerWindow.addch(spotpos[x].y, spotpos[x].x, Move.show(spotpos[x]))
-        Global.ringMagic.know[item.which] = True
+        Global.stickMagic.know[item.which] = True
     else:
         Io.msg("What a bizarre schtick!")
 
